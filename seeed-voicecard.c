@@ -14,6 +14,9 @@
  * published by the Free Software Foundation.
  */
 /* #undef DEBUG */
+
+//#define DEBUG
+
 #include <linux/version.h>
 #include <linux/clk.h>
 #include <linux/device.h>
@@ -217,8 +220,8 @@ static int seeed_voice_card_trigger(struct snd_pcm_substream *substream, int cmd
 		/* I know it will degrades performance, but I have no choice */
 		spin_lock_irqsave(&priv->lock, flags);
 		#endif
-		if (_set_clock[SNDRV_PCM_STREAM_CAPTURE]) _set_clock[SNDRV_PCM_STREAM_CAPTURE](1, substream, cmd, dai);
-		if (_set_clock[SNDRV_PCM_STREAM_PLAYBACK]) _set_clock[SNDRV_PCM_STREAM_PLAYBACK](1, substream, cmd, dai);
+//		if (_set_clock[SNDRV_PCM_STREAM_CAPTURE]) _set_clock[SNDRV_PCM_STREAM_CAPTURE](1, substream, cmd, dai);
+//		if (_set_clock[SNDRV_PCM_STREAM_PLAYBACK]) _set_clock[SNDRV_PCM_STREAM_PLAYBACK](1, substream, cmd, dai);
 		#if CONFIG_AC10X_TRIG_LOCK
 		spin_unlock_irqrestore(&priv->lock, flags);
 		#endif
@@ -233,14 +236,14 @@ static int seeed_voice_card_trigger(struct snd_pcm_substream *substream, int cmd
 		}
 
 		/* interrupt environment */
-		if (in_irq() || in_nmi() || in_serving_softirq()) {
-			priv->try_stop = 0;
-			if (0 != schedule_work(&priv->work_codec_clk)) {
-			}
-		} else {
-			if (_set_clock[SNDRV_PCM_STREAM_CAPTURE]) _set_clock[SNDRV_PCM_STREAM_CAPTURE](0, NULL, 0, NULL); /* not using 2nd to 4th arg if 1st == 0 */
-			if (_set_clock[SNDRV_PCM_STREAM_PLAYBACK]) _set_clock[SNDRV_PCM_STREAM_PLAYBACK](0, NULL, 0, NULL); /* not using 2nd to 4th arg if 1st == 0 */
-		}
+//		if (in_irq() || in_nmi() || in_serving_softirq()) {
+//			priv->try_stop = 0;
+//			if (0 != schedule_work(&priv->work_codec_clk)) {
+//			}
+//		} else {
+//			if (_set_clock[SNDRV_PCM_STREAM_CAPTURE]) _set_clock[SNDRV_PCM_STREAM_CAPTURE](0, NULL, 0, NULL); /* not using 2nd to 4th arg if 1st == 0 */
+//			if (_set_clock[SNDRV_PCM_STREAM_PLAYBACK]) _set_clock[SNDRV_PCM_STREAM_PLAYBACK](0, NULL, 0, NULL); /* not using 2nd to 4th arg if 1st == 0 */
+//		}
 		break;
 	default:
 		ret = -EINVAL;

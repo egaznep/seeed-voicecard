@@ -12,6 +12,9 @@
 /* #undef DEBUG
  * use 'make DEBUG=1' to enable debugging
  */
+ 
+//#define DEBUG
+
 #include <linux/module.h>
 #include <linux/moduleparam.h>
 #include <linux/init.h>
@@ -1074,7 +1077,10 @@ static int ac108_trigger(struct snd_pcm_substream *substream, int cmd,
 		}
 		spin_unlock_irqrestore(&ac10x->lock, flags);
 
-		/* delayed clock starting, move to machine trigger() */
+		/* delayed clock starting, move to machine trigger() <-- not true */
+		mdelay(10);
+		ac108_set_clock(1, NULL, 0, NULL);
+
 		break;
 	case SNDRV_PCM_TRIGGER_STOP:
 	case SNDRV_PCM_TRIGGER_SUSPEND:
@@ -1082,6 +1088,7 @@ static int ac108_trigger(struct snd_pcm_substream *substream, int cmd,
 		if (ac10x->i2c101 && _MASTER_MULTI_CODEC == _MASTER_AC101) {
 			ac101_trigger(substream, cmd, dai);
 		}
+		ac108_set_clock(0, NULL, 0, NULL);
 		break;
 	default:
 		ret = -EINVAL;
@@ -1423,7 +1430,7 @@ static int ac108_i2c_probe(struct i2c_client *i2c, const struct i2c_device_id *i
 			return -ENOMEM;
 		}
 	}
-
+	
 	index = (int)i2c_id->driver_data;
 	if (index == AC101_I2C_ID) {
 		ac10x->i2c101 = i2c;
