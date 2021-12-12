@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Color
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -116,16 +118,9 @@ if [[ $? -eq 0 ]]; then
   # Raspbian kernel packages
   apt-get -y install raspberrypi-kernel-headers raspberrypi-kernel 
   # Ubuntu kernel packages
-  apt-get -y install linux-raspi linux-headers-raspi linux-image-raspi
   apt-get -y install dkms git i2c-tools libasound2-plugins
   # rpi-update checker
   check_kernel_headers
-fi
-
-# Arch Linux
-which pacman &>/dev/null
-if [[ $? -eq 0 ]]; then
-  pacman -Syu --needed git gcc automake make dkms linux-raspberrypi-headers i2c-tools
 fi
 
 # locate currently installed kernels (may be different to running kernel if
@@ -152,7 +147,7 @@ function install_module {
   mod=$2
 
   if [[ -d /var/lib/dkms/$mod/$ver/$marker ]]; then
-    rmdir /var/lib/dkms/$mod/$ver/$marker
+    rm -rf /var/lib/dkms/$mod/$ver/$marker
   fi
 
   if [[ -e /usr/src/$mod-$ver || -e /var/lib/dkms/$mod/$ver ]]; then
@@ -206,7 +201,8 @@ grep -q "^dtparam=i2s=on$" $CONFIG || \
   echo "dtparam=i2s=on" >> $CONFIG
 
 #install config files
-mkdir /etc/voicecard || true
+rm -rf /etc/voicecard
+mkdir /etc/voicecard
 cp *.conf /etc/voicecard
 cp *.state /etc/voicecard
 

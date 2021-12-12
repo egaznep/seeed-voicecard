@@ -1078,7 +1078,6 @@ static int ac108_trigger(struct snd_pcm_substream *substream, int cmd,
 		spin_unlock_irqrestore(&ac10x->lock, flags);
 
 		/* delayed clock starting, move to machine trigger() <-- not true */
-		mdelay(10);
 		ac108_set_clock(1, NULL, 0, NULL);
 
 		break;
